@@ -4,5 +4,5 @@ r-spantree:src/main.c
 clean:
 	rm bin/main.o
 	rm r-spantree
-test:
+testen:
 	./r-spantree -in test/instance/01.txt -out test/instance/01_solved.txt
