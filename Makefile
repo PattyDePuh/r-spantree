@@ -1,4 +1,4 @@
-r-spantree:src/main.c	
+r-spantree:src/main.c src/header.h
 	gcc -c src/main.c -o bin/main.o
 	gcc bin/main.o -o r-spantree
 clean:
