@@ -1,7 +1,8 @@
-r-spantree: bin/main.o
-  gcc bin/main.o r-spantree
-main.o: src/main.c
+r-spantree:src/main.c	
 	gcc -c src/main.c -o bin/main.o
+	gcc bin/main.o -o r-spantree
 clean:
 	rm bin/main.o
 	rm r-spantree
+test:
+	./r-spantree -in test/instance/01.txt -out test/instance/01_solved.txt
