@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <time.h>
-#include "header.h"
+#include <vector>
+#include <string>
+
+using std::vector;
+
+#include "header.hpp"
 
 
 int main(int argc, char* argv[]){

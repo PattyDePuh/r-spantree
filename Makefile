@@ -1,6 +1,6 @@
-r-spantree:src/main.c src/header.h
-	gcc -c src/main.c -o bin/main.o
-	gcc bin/main.o -o r-spantree
+r-spantree:src/main.cpp src/header.hpp
+	g++ -c src/main.cpp -o bin/main.o
+	g++ bin/main.o -o r-spantree
 clean:
 	rm bin/main.o
 	rm r-spantree
