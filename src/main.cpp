@@ -20,6 +20,7 @@ using std::queue;
 
 #include "header.hpp"
 
+#define FAIL 99999999
 
 int main(int argc, char* argv[]){
 	
@@ -140,13 +141,31 @@ bool optimize(){
   //Start
   start_zeit = clock();
 
-  //TODO hier ausarbeiten
+  //Initialisierung der Arrays (zT. Monitoring)
+  current_solution[anzahl_kanten];
+  best_solution[anzahl_kanten];
+  incidente_array[anzahl_knoten];
+  restriction_array[anzahl_knoten];
+  for(int k = 0; k < anzahl_kanten){
+    current_solution[k] = 0;
+    best_solution[k] = 0;
+    incidente_array[k] = 0;
+    restriction_array[k] = knotenliste.at(k).restriction;
+  }
+  current_cost = 0;
+  best_cost = FAIL;
+
+  //TODO . Die große Suche
 
   //Ende
   end_zeit = clock();
 
-  //TODO guter return
-  return false;
+  //return true, wenn eine valide Lösung gefunden wurde. 
+  if(best_cost == FAIL){
+    return false
+  }else{
+    return true;
+  }
 }
 
 

@@ -52,6 +52,15 @@ int anzahl_kanten;
 std::stringstream fehlertext;
 bool erfolg;
 
+//Optimierungsvariablen
+int current_solution[];
+int current_cost[];
+int best_solution[];
+int best_cost[];
+
+int incidente_array[];
+int restriction_array[];
+
 //Methoden von main.c
 void showUsage(void);
 void einlesen(string path);
