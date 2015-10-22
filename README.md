@@ -8,9 +8,6 @@ C program to find solution for a minimum spanning tree with maximum edge restric
 - Zeile (3+n) - (2+n+m):  Startknoten; Endknoten; Kantengewicht; (optional Lösung [0/1])
 
 # ToDo's
-- Inputvalidierung
-  - Unterscheidung zwischen -eval und solve
-- Eingabe parsen
 - Solver schreiben
-- Validator schreiben
+  - Spezial-Validator für Solver schreiben
 - Ausgabe schreiben
