@@ -108,7 +108,7 @@ void einlesen(string path){
     knotenliste.emplace_back(j, stoi(input_string));
   }
   //Lese die Kanten ein
-  for(int j = 0; j <= anzahl_knoten; j++){
+  for(int j = 0; j <= anzahl_kanten; j++){
     //Trenne die eingelesene Zeile an den Leerzeichen.
     string input_string;
     //Startknoten
@@ -143,19 +143,34 @@ bool optimize(){
 
   //Initialisierung der Arrays (zT. Monitoring)
   current_solution[anzahl_kanten];
-  best_solution[anzahl_kanten];
+  best_solution[anzahl_kanten]; //Wird in der ersten Phase nicht verwendet
+  kante_untersucht[anzahl_kanten];
   incidente_array[anzahl_knoten];
   restriction_array[anzahl_knoten];
+
   for(int k = 0; k < anzahl_kanten){
     current_solution[k] = 0;
-    best_solution[k] = 0;
+    best_solution[k] = 0; 
+    kante_untersucht[k] = 0;
+  }
+  for(int k = 0; k < anzahl_knoten){
     incidente_array[k] = 0;
     restriction_array[k] = knotenliste.at(k).restriction;
   }
+  int anzahl_kanten_picked = 0;
   current_cost = 0;
   best_cost = FAIL;
 
-  //TODO . Die große Suche
+  //Initiales Einfügen
+  //Füge die n-günstigsten Kanten ein ohne Prüfung (logische Mindestanzahl)
+  while(anzahl_kanten_picked < anzahl_knoten-1){
+    //Füge dem Graphen eine Kante hinzu
+    kante_setzen();
+  }
+  //Anschließend füge solange Kanten hinzu, bis der Graph valide ist.
+  while(!einigkeits_test()){
+    kante_setzen();
+  }
 
   //Ende
   end_zeit = clock();
@@ -168,9 +183,42 @@ bool optimize(){
   }
 }
 
+//Sucht nach der nächst-günstigen Kante und versucht diese einzufügen.
+void kante_setzen(){
 
+  min_cost = FAIL;
+  min_candidat = -1;
+  for(auto it = kantenliste.begin(); it != kantenliste.end(); it++){
+    //Wenn die Kante noch nicht besucht wurde
+    if(current_solution[it->id] != 1 && it->cost < min_cost && kante_untersucht[it->id] != 1){
+      min_cost = it->cost;
+      min_candidat = it->id;
+    }  
+  }
+  //Wenn alle Kanten bereits besucht sind -> Fehler: Brich ab.
+  if(min_candidat == -1){
+    std::cout << "-1\t0\n";
+    exit(0);
+  }
+  //Hol dir die Kante ausm vector.
+  Kante kante = kantenliste.at(min_candidat);
+  //Markiere die Kante, dass sie untersucht wird.
+  kante_untersucht[kante.id] = 1;
+  //Überprüfe, ob die Kante von den Knoten tragbar ist.
+  if(incidente_array[kante.start] < restriction_array[kante.start] &&
+    incidente_array[kante.ziel] < restriction_array[kante.ziel]){
+    //Es passt! Füge die Kante der Lösung hinzu.
+    current_solution[kante.id] = 1;
+    kante.result = 1;
+    current_cost += kante.cost;
+    //Passe das entsprechen incidente_array an.
+    ++incidente_array[kante.start];
+    ++incidente_array[kante.ziel];
+  }
+  //ggf TODO - Schleife bauen, wenn die Kante nicht hinzugefügt wurde.
+}
 
-bool validate(){
+bool validate(bool schreibe_Fehlertext){
   bool valide = true;
   //Initialisierung des Check-Arrays und des Stacks
   bool besucht[anzahl_knoten];
@@ -230,7 +278,9 @@ bool validate(){
     }
     //Abschließend überprüfen, dass die Anzahl Kanten
     if(n.restriction < incidente){
-      fehlertext << "Knoten Nr." << n.id << " hat zuviele Kanten: " << incidente << " von " << n.restriction << "\n";
+      if(schreibe_Fehlertext){
+        fehlertext << "Knoten Nr." << n.id << " hat zuviele Kanten: " << incidente << " von " << n.restriction << "\n";
+      }
       valide == false;
     }
   } while(!such_que.empty());
@@ -239,7 +289,9 @@ bool validate(){
   //überprüfe im Array, ob alle Knoten besucht wurden.
   for(i = 0; i < anzahl_knoten; i++){
     if(besucht[i] == false){
-      fehlertext << "Knoten Nr." << i << " ist vom Knoten Nr.0 nicht erreichbar!\n"; 
+      if(schreibe_Fehlertext){
+        fehlertext << "Knoten Nr." << i << " ist vom Knoten Nr.0 nicht erreichbar!\n"; 
+      }
       valide = false;
     }
   }
@@ -249,4 +301,5 @@ bool validate(){
 
 void ausgeben(string path){
   //TODO
+  printf("Die Ausgabe muss noch implementiert werden.");
 }
