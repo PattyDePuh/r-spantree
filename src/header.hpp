@@ -11,11 +11,11 @@ struct knoten_konstrukt{
 };
 //Kanten im Graph
 struct kanten_konstrukt{
-	kanten_konstrukt(int id, int start, int ziel, int kosten, int result): id(id), start(start), ziel(ziel), kosten(kosten), result(result) {};
+	kanten_konstrukt(int id, int start, int ziel, int cost, int result): id(id), start(start), ziel(ziel), cost(cost), result(result) {};
 	int id;
 	int start;
 	int ziel;
-	int kosten;
+	int cost;
 	int result;
 };
 
@@ -53,19 +53,25 @@ std::stringstream fehlertext;
 bool erfolg;
 
 //Optimierungsvariablen
-int current_solution[];
-int current_cost[];
-int best_solution[];
-int best_cost[];
+//int current_solution[];
+//int current_cost[];
+//int best_solution[];
+//int best_cost[];
 
-int incidente_array[];
-int restriction_array[];
+//int incidente_array[];
+//int restriction_array[];
+//int kante_untersucht
+
+int current_cost;
+int best_cost;
 
 //Methoden von main.c
 void showUsage(void);
 void einlesen(string path);
-bool validate();
+bool validate(bool schreibe_Fehlertext);
 bool optimize();
+void kante_setzen(int current_solution[], int kante_untersucht[], int incidente_array[], int restriction_array[]);
+bool einigkeits_test();
 void ausgeben(string path);
 
 #endif 

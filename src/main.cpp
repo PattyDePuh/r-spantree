@@ -54,7 +54,7 @@ int main(int argc, char* argv[]){
   einlesen(input_path);
   if(eval_parameter == true){
     //Führe Validierung
-    erfolg = validate();
+    erfolg = validate(true);
     if(erfolg){
       //Validierung erfolgreich
       printf("valide Lösung\n");
@@ -142,18 +142,18 @@ bool optimize(){
   start_zeit = clock();
 
   //Initialisierung der Arrays (zT. Monitoring)
-  current_solution[anzahl_kanten];
-  best_solution[anzahl_kanten]; //Wird in der ersten Phase nicht verwendet
-  kante_untersucht[anzahl_kanten];
-  incidente_array[anzahl_knoten];
-  restriction_array[anzahl_knoten];
+  int current_solution[anzahl_kanten];
+  int best_solution[anzahl_kanten]; //Wird in der ersten Phase nicht verwendet
+  int kante_untersucht[anzahl_kanten];
+  int incidente_array[anzahl_knoten];
+  int restriction_array[anzahl_knoten];
 
-  for(int k = 0; k < anzahl_kanten){
+  for(int k = 0; k < anzahl_kanten; k++){
     current_solution[k] = 0;
     best_solution[k] = 0; 
     kante_untersucht[k] = 0;
   }
-  for(int k = 0; k < anzahl_knoten){
+  for(int k = 0; k < anzahl_knoten;k++){
     incidente_array[k] = 0;
     restriction_array[k] = knotenliste.at(k).restriction;
   }
@@ -165,11 +165,11 @@ bool optimize(){
   //Füge die n-günstigsten Kanten ein ohne Prüfung (logische Mindestanzahl)
   while(anzahl_kanten_picked < anzahl_knoten-1){
     //Füge dem Graphen eine Kante hinzu
-    kante_setzen();
+    kante_setzen(current_solution, kante_untersucht, incidente_array, restriction_array);
   }
   //Anschließend füge solange Kanten hinzu, bis der Graph valide ist.
-  while(!einigkeits_test()){
-    kante_setzen();
+  while(!validate(false)){
+    kante_setzen(current_solution, kante_untersucht, incidente_array, restriction_array);
   }
 
   //Ende
@@ -177,17 +177,17 @@ bool optimize(){
 
   //return true, wenn eine valide Lösung gefunden wurde. 
   if(best_cost == FAIL){
-    return false
+    return false;
   }else{
     return true;
   }
 }
 
 //Sucht nach der nächst-günstigen Kante und versucht diese einzufügen.
-void kante_setzen(){
+void kante_setzen(int current_solution[], int kante_untersucht[], int incidente_array[], int restriction_array[]){
 
-  min_cost = FAIL;
-  min_candidat = -1;
+  int min_cost = FAIL;
+  int min_candidat = -1;
   for(auto it = kantenliste.begin(); it != kantenliste.end(); it++){
     //Wenn die Kante noch nicht besucht wurde
     if(current_solution[it->id] != 1 && it->cost < min_cost && kante_untersucht[it->id] != 1){
