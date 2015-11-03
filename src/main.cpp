@@ -300,6 +300,21 @@ bool validate(bool schreibe_Fehlertext){
 }
 
 void ausgeben(string path){
-  //TODO
-  printf("Die Ausgabe muss noch implementiert werden.");
+  printf("Schreibe Ausgabedatei");
+  //Öffne bzw. erstelle Outputdatei
+  output_graph.open(output_path, std::ofstream::out | std::ofstream::app);
+  //Füge Anzahl Knoten und Kanten ein.
+  output_graph << anzahl_knoten << std::endl << anzahl_kanten << std::endl;
+  //Füge in einer Schleife nun die Kantenrestriktion der Knoten ein.
+  for (auto it = knotenliste.begin(); it != knotenliste.end(); it++){
+    output_graph << it->restriction << std::endl;
+  }
+  //Füge in einer Schleife alle Kanten nun ein: Startknoten Zielknoten Kantenkosten Lösung
+  for (auto it = kantenliste.begin(); it != kantenliste.end(); it++){
+    output_graph << it->start << " " << it->ziel << " " << it->cost << " " << it->result << std::endl;
+  }
+  //Schließe die Datei
+  output_graph.close();
+
+  printf("Ausgabe abgeschlossen");
 }
