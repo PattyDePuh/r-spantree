@@ -66,31 +66,41 @@ int main(int argc, char* argv[]){
       return 1;
     }
   }else{
+    //---------------------------------------------------
+    //HIER werden die Optimierungsansätze eingefügt bzw.
+    //Optimierungsmethoden Aufruf findet HIER statt.
+
     //Führe Optimierung durch
     erfolg = optimize();
+
+    //Wenn die Optimierung erfolgreich war, 
     if(erfolg){
+      //Schreibe das Ergebnis in die Ausgabedatei raus
       ausgeben(output_path);
     }
+
+    //-------------------------------------------------
   }
 
-  //TODO dynamische Ausgabe 
-  printf("%d\t%ld\n", -1, ((end_zeit - start_zeit) * 1000) / CLOCKS_PER_SEC );
+  //'best_cost' immer mit den errechneten Kosten der Lösung belegen.
+  //ODER mit der Konstante FAIL besetzen bzw. direkt -1
+  best_cost = best_cost == FAIL ? -1 : best_cost;
+  printf("%d\t%ld\n", best_cosr, ((end_zeit - start_zeit) * 1000) / CLOCKS_PER_SEC );
   return 0;
 }
 
 
-
+//Bei unangebrachtem Aufruf des Programms folgende "Gebrauchsanweisung" ausgeben.
 void showUsage(){
 	printf("Aufrufschema: './rspantree -in <path/to/input> -out <path/to/output>'\n");
 	printf("Bzw: './r-spantree -eval <path/to/instance>' für Evaluierung");
 }
 
-
-
-void einlesen(string path){
-  std::cout << "Lese "<< path << " ein ...\n";
+//Lese den Graphen ein aus der Datei 'file'
+void einlesen(string file_path){
+  std::cout << "Lese "<< file_path << " ein ...\n";
   //Initialisierung Stream
-  input_graph.open(path);
+  input_graph.open(file_path);
   //Lese Kanten und Knotenanzahl aus.
   string input_knoten;
   string input_kanten;
@@ -136,7 +146,7 @@ void einlesen(string path){
 }
 
 
-
+//Erster Versuch eine Lösung zu finden.
 bool optimize(){
   //Start
   start_zeit = clock();
@@ -218,6 +228,7 @@ void kante_setzen(int current_solution[], int kante_untersucht[], int incidente_
   //ggf TODO - Schleife bauen, wenn die Kante nicht hinzugefügt wurde.
 }
 
+//Überprüfe die Lösung des Graphen, ob diese gültig ist.
 bool validate(bool schreibe_Fehlertext){
   bool valide = true;
   //Initialisierung des Check-Arrays und des Stacks
@@ -299,10 +310,12 @@ bool validate(bool schreibe_Fehlertext){
   return valide;
 }
 
-void ausgeben(string path){
+//Schreibe Graphen incl. Lösung in Datei aus
+void ausgeben(string file_path){
   printf("Schreibe Ausgabedatei");
+
   //Öffne bzw. erstelle Outputdatei
-  output_graph.open(output_path, std::ofstream::out | std::ofstream::app);
+  output_graph.open(file_path, std::ofstream::out | std::ofstream::app);
   //Füge Anzahl Knoten und Kanten ein.
   output_graph << anzahl_knoten << std::endl << anzahl_kanten << std::endl;
   //Füge in einer Schleife nun die Kantenrestriktion der Knoten ein.

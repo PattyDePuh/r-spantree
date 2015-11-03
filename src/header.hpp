@@ -68,12 +68,11 @@ int best_cost;
 
 //Methoden von main.c
 void showUsage(void);
-void einlesen(string path);
+void einlesen(string file_path);
 bool validate(bool schreibe_Fehlertext);
 bool optimize();
 void kante_setzen(int current_solution[], int kante_untersucht[], int incidente_array[], int restriction_array[]);
-bool einigkeits_test();
-void ausgeben(string path);
+void ausgeben(string file_path);
 
 #endif 
 /* Ende HEADER_HPP */
