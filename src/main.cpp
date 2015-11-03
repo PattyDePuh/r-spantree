@@ -88,7 +88,7 @@ void showUsage(){
 
 
 void einlesen(string path){
-  std::cout << "Ich lese ein von "<< path << " ...\n";
+  std::cout << "Lese "<< path << " ein ...\n";
   //Initialisierung Stream
   input_graph.open(path);
   //Lese Kanten und Knotenanzahl aus.
@@ -102,13 +102,13 @@ void einlesen(string path){
   kantenliste.reserve(anzahl_kanten);
   knotenliste.reserve(anzahl_knoten);
   //Lese die Knoten ein
-  for(int j = 0; j <= anzahl_knoten; j++){
+  for(int j = 0; j <= anzahl_knoten - 1; j++){
     string input_string;
     getline(input_graph, input_string);
     knotenliste.emplace_back(j, stoi(input_string));
   }
   //Lese die Kanten ein
-  for(int j = 0; j <= anzahl_kanten; j++){
+  for(int j = 0; j <= anzahl_kanten - 1; j++){
     //Trenne die eingelesene Zeile an den Leerzeichen.
     string input_string;
     //Startknoten
@@ -257,21 +257,21 @@ bool validate(bool schreibe_Fehlertext){
       //Lese Eingangs/Ausgangskante aus.
       if(kante->start == n.id){
         //Wenn eine incidente Kante, zähle hoch
-        if(kante->result = 1){
+        if(kante->result == 1){
           ++incidente;
         }
         //Schreibe Nachbarkante in die Que, wenn noch nicht besucht
-        if(besucht[kante->ziel] == false){
+        if(besucht[kante->ziel] == false && kante->result == 1){
           such_que.push(kante->ziel);
         }
       }
       if(kante->ziel == n.id){
         //Wenn eine incidente Kante, zähle hoch
-        if(kante->result = 1){
+        if(kante->result == 1){
           ++incidente;
         }
         //Schreibe Nachbarkante in die Que, wenn noch nicht besucht
-        if(besucht[kante->start] == false){
+        if(besucht[kante->start] == false && kante->result == 1){
           such_que.push(kante->start);
         }
       }

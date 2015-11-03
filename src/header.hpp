@@ -1,6 +1,7 @@
 /* Header-File “header.hpp“: */
 #ifndef HEADER_HPP
 #define HEADER_HPP
+#define DEBUG
 
 //Strukturen
 //Knoten im Graph
