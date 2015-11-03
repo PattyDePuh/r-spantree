@@ -9,5 +9,8 @@ C program to find solution for a minimum spanning tree with maximum edge restric
 
 # ToDo's
 - Solver schreiben
-  - Spezial-Validator für Solver schreiben
-- Ausgabe schreiben
+  - 2 Heuristiken bis Anfang Dezember
+  - 1 Integerprogramm Ansatz bis Januar
+  - ein weiterer, beliebiger Ansatz bis Februar
+  - ggf. Spezial-Validator für Solver schreiben
+
