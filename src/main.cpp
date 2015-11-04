@@ -23,6 +23,7 @@ using std::queue;
 #define FAIL 99999999
 
 int main(int argc, char* argv[]){
+//./r-spantree -in path/to/file/ -out (path
 	
 	//Eingabe-Validierung
   if( argc != 5 && argc != 3){
@@ -85,7 +86,7 @@ int main(int argc, char* argv[]){
   //'best_cost' immer mit den errechneten Kosten der Lösung belegen.
   //ODER mit der Konstante FAIL besetzen bzw. direkt -1
   best_cost = best_cost == FAIL ? -1 : best_cost;
-  printf("%d\t%ld\n", best_cosr, ((end_zeit - start_zeit) * 1000) / CLOCKS_PER_SEC );
+  printf("%d\t%ld\n", best_cost, ((end_zeit - start_zeit) * 1000) / CLOCKS_PER_SEC );
   return 0;
 }
 
