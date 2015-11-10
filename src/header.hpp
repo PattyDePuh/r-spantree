@@ -3,6 +3,28 @@
 #define HEADER_HPP
 #define DEBUG
 
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <vector>
+#include <istream>
+#include <iostream>
+#include <string>
+#include <cstring>
+#include <fstream>
+#include <sstream>
+#include <exception>
+#include <queue>
+
+using std::vector;
+using std::ifstream;
+using std::ofstream;
+using std::string;
+using std::strtok;
+using std::queue;
+
+#define FAIL 99999999
+
 //Strukturen
 //Knoten im Graph
 struct knoten_konstrukt{
@@ -22,57 +44,6 @@ struct kanten_konstrukt{
 
 typedef kanten_konstrukt Kante;
 typedef knoten_konstrukt Knoten;
-
-//Variablen
-//Läufer
-int i;
-int k_id;
-
-//Parameter-Flag
-bool eval_parameter;
-string input_path;
-string output_path;
-
-//Hilfsvariablen zur Zeiterfassung
-clock_t start_zeit;
-clock_t end_zeit;
-
-//Graphenstacks
-vector<Kante> kantenliste;
-vector<Knoten> knotenliste;
-
-//Einlese-Stream
-ifstream input_graph;
-ofstream output_graph;
-
-//Zähler
-int anzahl_knoten;
-int anzahl_kanten;
-
-//Fehlerausgabe
-std::stringstream fehlertext;
-bool erfolg;
-
-//Optimierungsvariablen
-//int current_solution[];
-//int current_cost[];
-//int best_solution[];
-//int best_cost[];
-
-//int incidente_array[];
-//int restriction_array[];
-//int kante_untersucht
-
-int current_cost;
-int best_cost;
-
-//Methoden von main.c
-void showUsage(void);
-void einlesen(string file_path);
-bool validate(bool schreibe_Fehlertext);
-bool optimize();
-void kante_setzen(int current_solution[], int kante_untersucht[], int incidente_array[], int restriction_array[]);
-void ausgeben(string file_path);
 
 #endif 
 /* Ende HEADER_HPP */

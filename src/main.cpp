@@ -1,26 +1,17 @@
-#include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
-#include <vector>
-#include <istream>
-#include <iostream>
-#include <string>
-#include <cstring>
-#include <fstream>
-#include <sstream>
-#include <exception>
-#include <queue>
-
-using std::vector;
-using std::ifstream;
-using std::ofstream;
-using std::string;
-using std::strtok;
-using std::queue;
-
 #include "header.hpp"
+#include "main.hpp"
 
-#define FAIL 99999999
+#ifdef HEURISTIK_0
+#include "heuristic_dump.hpp"
+#endif
+
+#ifdef HEURISTIK_1
+#include "heuristic_1.hpp"
+#endif
+
+#ifdef HEURISTIK_2
+#include "heuristic_2.hpp"
+#endif
 
 int main(int argc, char* argv[]){
 //./r-spantree -in path/to/file/ -out (path
@@ -29,12 +20,12 @@ int main(int argc, char* argv[]){
   if( argc != 5 && argc != 3){
   	printf("Unzulässige Anzahl an Argumenten: %d \n", argc);
   	showUsage();
-  	return 1;
+  	return 2;
   }
   printf("Moin, dies ist der Aufruf von r-spantree.\n");
   //Parameter filtern
   eval_parameter = false;
-  for( i = 1; i < argc - 1; i++ ){
+  for(int i = 1; i < argc - 1; i++ ){
     //Argument erfassen
     string s = argv[i];
     //Ist der -in Parameter erfasst, lese die Datei aus folgenden Path ein.
@@ -51,11 +42,14 @@ int main(int argc, char* argv[]){
     }
   }
     
+  //Hier soll später das Ergebnis gespeichert werden.
+  long best_cost = -1;
+
   //Parameter Bearbeitung/Validierung
   einlesen(input_path);
   if(eval_parameter == true){
     //Führe Validierung
-    erfolg = validate(true);
+    bool erfolg = validate();
     if(erfolg){
       //Validierung erfolgreich
       printf("valide Lösung\n");
@@ -72,10 +66,11 @@ int main(int argc, char* argv[]){
     //Optimierungsmethoden Aufruf findet HIER statt.
 
     //Führe Optimierung durch
-    erfolg = optimize();
-
+    start_zeit = clock();
+    best_cost = optimize(&knotenliste, &kantenliste, anzahl_knoten, anzahl_kanten);
+    end_zeit = clock();
     //Wenn die Optimierung erfolgreich war, 
-    if(erfolg){
+    if(best_cost != -1){
       //Schreibe das Ergebnis in die Ausgabedatei raus
       ausgeben(output_path);
     }
@@ -84,9 +79,8 @@ int main(int argc, char* argv[]){
   }
 
   //'best_cost' immer mit den errechneten Kosten der Lösung belegen.
-  //ODER mit der Konstante FAIL besetzen bzw. direkt -1
-  best_cost = best_cost == FAIL ? -1 : best_cost;
-  printf("%d\t%ld\n", best_cost, ((end_zeit - start_zeit) * 1000) / CLOCKS_PER_SEC );
+  //ODER -1 bei Fehlschlag
+  printf("%ld\t%ld\n", best_cost, ((end_zeit - start_zeit) * 1000) / CLOCKS_PER_SEC );
   return 0;
 }
 
@@ -146,91 +140,8 @@ void einlesen(string file_path){
   printf("Einlese-Prozess fertig.\n");
 }
 
-
-//Erster Versuch eine Lösung zu finden.
-bool optimize(){
-  //Start
-  start_zeit = clock();
-
-  //Initialisierung der Arrays (zT. Monitoring)
-  int current_solution[anzahl_kanten];
-  int best_solution[anzahl_kanten]; //Wird in der ersten Phase nicht verwendet
-  int kante_untersucht[anzahl_kanten];
-  int incidente_array[anzahl_knoten];
-  int restriction_array[anzahl_knoten];
-
-  for(int k = 0; k < anzahl_kanten; k++){
-    current_solution[k] = 0;
-    best_solution[k] = 0; 
-    kante_untersucht[k] = 0;
-  }
-  for(int k = 0; k < anzahl_knoten;k++){
-    incidente_array[k] = 0;
-    restriction_array[k] = knotenliste.at(k).restriction;
-  }
-  int anzahl_kanten_picked = 0;
-  current_cost = 0;
-  best_cost = FAIL;
-
-  //Initiales Einfügen
-  //Füge die n-günstigsten Kanten ein ohne Prüfung (logische Mindestanzahl)
-  while(anzahl_kanten_picked < anzahl_knoten-1){
-    //Füge dem Graphen eine Kante hinzu
-    kante_setzen(current_solution, kante_untersucht, incidente_array, restriction_array);
-  }
-  //Anschließend füge solange Kanten hinzu, bis der Graph valide ist.
-  while(!validate(false)){
-    kante_setzen(current_solution, kante_untersucht, incidente_array, restriction_array);
-  }
-
-  //Ende
-  end_zeit = clock();
-
-  //return true, wenn eine valide Lösung gefunden wurde. 
-  if(best_cost == FAIL){
-    return false;
-  }else{
-    return true;
-  }
-}
-
-//Sucht nach der nächst-günstigen Kante und versucht diese einzufügen.
-void kante_setzen(int current_solution[], int kante_untersucht[], int incidente_array[], int restriction_array[]){
-
-  int min_cost = FAIL;
-  int min_candidat = -1;
-  for(auto it = kantenliste.begin(); it != kantenliste.end(); it++){
-    //Wenn die Kante noch nicht besucht wurde
-    if(current_solution[it->id] != 1 && it->cost < min_cost && kante_untersucht[it->id] != 1){
-      min_cost = it->cost;
-      min_candidat = it->id;
-    }  
-  }
-  //Wenn alle Kanten bereits besucht sind -> Fehler: Brich ab.
-  if(min_candidat == -1){
-    std::cout << "-1\t0\n";
-    exit(0);
-  }
-  //Hol dir die Kante ausm vector.
-  Kante kante = kantenliste.at(min_candidat);
-  //Markiere die Kante, dass sie untersucht wird.
-  kante_untersucht[kante.id] = 1;
-  //Überprüfe, ob die Kante von den Knoten tragbar ist.
-  if(incidente_array[kante.start] < restriction_array[kante.start] &&
-    incidente_array[kante.ziel] < restriction_array[kante.ziel]){
-    //Es passt! Füge die Kante der Lösung hinzu.
-    current_solution[kante.id] = 1;
-    kante.result = 1;
-    current_cost += kante.cost;
-    //Passe das entsprechen incidente_array an.
-    ++incidente_array[kante.start];
-    ++incidente_array[kante.ziel];
-  }
-  //ggf TODO - Schleife bauen, wenn die Kante nicht hinzugefügt wurde.
-}
-
 //Überprüfe die Lösung des Graphen, ob diese gültig ist.
-bool validate(bool schreibe_Fehlertext){
+bool validate(){
   bool valide = true;
   //Initialisierung des Check-Arrays und des Stacks
   bool besucht[anzahl_knoten];
@@ -290,20 +201,16 @@ bool validate(bool schreibe_Fehlertext){
     }
     //Abschließend überprüfen, dass die Anzahl Kanten
     if(n.restriction < incidente){
-      if(schreibe_Fehlertext){
-        fehlertext << "Knoten Nr." << n.id << " hat zuviele Kanten: " << incidente << " von " << n.restriction << "\n";
-      }
-      valide == false;
+        fehlertext << "Knoten Nr." << n.id << " hat zuviele Kanten: " << incidente << " von " << n.restriction << "\n";      
+      valide = false;
     }
   } while(!such_que.empty());
 
   //Wenn keine Restriction gebrochen wurde, 
   //überprüfe im Array, ob alle Knoten besucht wurden.
-  for(i = 0; i < anzahl_knoten; i++){
+  for(int i = 0; i < anzahl_knoten; i++){
     if(besucht[i] == false){
-      if(schreibe_Fehlertext){
         fehlertext << "Knoten Nr." << i << " ist vom Knoten Nr.0 nicht erreichbar!\n"; 
-      }
       valide = false;
     }
   }
