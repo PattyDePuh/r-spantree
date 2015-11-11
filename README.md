@@ -13,4 +13,11 @@ C program to find solution for a minimum spanning tree with maximum edge restric
   - 1 Integerprogramm Ansatz bis Januar
   - ein weiterer, beliebiger Ansatz bis Februar
   - ggf. Spezial-Validator für Solver schreiben
+  - 
+
+# Projekt kompilieren mit CMake
+mkdir build
+cd build
+cmake ..
+make
 
