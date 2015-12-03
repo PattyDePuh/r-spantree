@@ -220,7 +220,7 @@ bool validate(){
 
 //Schreibe Graphen incl. Lösung in Datei aus
 void ausgeben(string file_path){
-  printf("Schreibe Ausgabedatei");
+  //printf("Schreibe Ausgabedatei\n");
 
   //Öffne bzw. erstelle Outputdatei
   output_graph.open(file_path, std::ofstream::out | std::ofstream::app);
@@ -237,5 +237,5 @@ void ausgeben(string file_path){
   //Schließe die Datei
   output_graph.close();
 
-  printf("Ausgabe abgeschlossen");
+  //printf("Ausgabe abgeschlossen\n");
 }
