@@ -1,7 +1,12 @@
-/* Header-File heuristic_2.hpp */
 #ifndef HEURISTIC_2_HPP
 #define HEURISTIC_2_HPP
 
-long optimize(vector<Knoten>* knotenliste, vector<Kante>* kantenliste, int anzahl_knoten, int anzahl_kanten);
+vector<Edge> result;
+
+// comparator deciding if lhs has less cost than rhs
+bool edgeCompare (Edge, Edge);
+
+// tries to find path with minimal cost using modified Kruskal
+long optimize (vector<Knoten>*, vector<Kante>*, int, int);
 
 #endif
