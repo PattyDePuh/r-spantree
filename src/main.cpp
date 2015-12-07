@@ -100,6 +100,7 @@ void einlesen(string file_path){
   string input_knoten;
   string input_kanten;
   getline(input_graph, input_knoten);
+  getline(input_graph, input_knoten);
   getline(input_graph, input_kanten);
   anzahl_knoten = stoi(input_knoten);
   anzahl_kanten = stoi(input_kanten);
