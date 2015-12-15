@@ -39,22 +39,39 @@ bool circle (std::vector<Knoten>* nodes, std::vector<Kante>& edges) {
   int finished[100] = {};
   for (std::vector<Knoten>::iterator it = nodes->begin(); it < nodes->end(); it++) {
     std::cout << "It for node " << it->id << std::endl;
-    circleRecursive(it->id, nodes, edges, visited, finished, it->id);
+    if (circleRecursive(it->id, nodes, edges, visited, finished, it->id)) {
+      return true;
+    }
   }
   return false;
 }
 
 long optimize (std::vector<Knoten>* nodes, std::vector<Kante>* edges, int, int) {
-  int i = 0;
+  long bestcost = 0;
   vector<Kante> tmpedges;
   //TODO think about sorting the other way
+  // sort the edges by their cost
   std::sort(edges->begin(), edges->end(), edgeCompare);
-  std::reverse(edges->begin(), edges->end());
 
-  while (edges->size()) {
-    tmpedges.push_back(*(edges->end()));
-    edges->pop_back();
-    circle(nodes, tmpedges);
+  int* degree = new int[nodes->size()];
+  for (unsigned int i = 0; i < nodes->size(); i++) {
+    degree[i] = (*nodes)[i].restriction;
   }
-  return -1;
+
+  // add a new edge to tmpedges and check if there is a circle
+  for (unsigned int i = 0; i < edges->size(); i++) {
+    tmpedges.push_back((*edges)[i]);
+    if (circle(nodes, tmpedges) || degree[(*edges)[i].start] == 0 || degree[(*edges)[i].ziel] == 0) {
+      tmpedges.pop_back();
+      (*edges)[i].result = 0;
+    }
+    else {
+      (*edges)[i].result = 1;
+      degree[(*edges)[i].start]--;
+      degree[(*edges)[i].ziel]--;
+      bestcost += (*edges)[i].cost;
+    }
+  }
+  delete[] degree;
+  return bestcost;
 }
