@@ -14,7 +14,7 @@ bool circleRecursive(int nodeIndex, std::vector<Knoten>* nodes, std::vector<Kant
     return false;
   }
   if (visited[nodeIndex]) {
-    std::cout << "circle at node " << nodeIndex << " from " << sourceIndex << std::endl;
+    //std::cout << "circle at node " << nodeIndex << " from " << sourceIndex << std::endl;
     return true;
   }
   visited[nodeIndex]++;
@@ -33,32 +33,36 @@ bool circleRecursive(int nodeIndex, std::vector<Knoten>* nodes, std::vector<Kant
 }
 
 bool circle (std::vector<Knoten>* nodes, std::vector<Kante>& edges) {
-  //int visited[nodes->size()] = {};
-  //int finished[nodes->size()] = {};
-  int visited[100] = {};
-  int finished[100] = {};
+  int* visited = new int[nodes->size()];
+  int* finished = new int[nodes->size()];
   for (std::vector<Knoten>::iterator it = nodes->begin(); it < nodes->end(); it++) {
-    std::cout << "It for node " << it->id << std::endl;
+    //std::cout << "It for node " << it->id << std::endl;
     if (circleRecursive(it->id, nodes, edges, visited, finished, it->id)) {
+      delete[] visited;
+      delete[] finished;
       return true;
     }
   }
+  delete[] visited;
+  delete[] finished;
   return false;
 }
 
 long optimize (std::vector<Knoten>* nodes, std::vector<Kante>* edges, int, int) {
   long bestcost = 0;
   vector<Kante> tmpedges;
-  //TODO think about sorting the other way
   // sort the edges by their cost
   std::sort(edges->begin(), edges->end(), edgeCompare);
+
+  int* reached = new int[nodes->size()];
 
   int* degree = new int[nodes->size()];
   for (unsigned int i = 0; i < nodes->size(); i++) {
     degree[i] = (*nodes)[i].restriction;
+    reached[i] = 0;
+    //std::cout << "degree:" << degree[i] << " ";
   }
 
-  // add a new edge to tmpedges and check if there is a circle
   for (unsigned int i = 0; i < edges->size(); i++) {
     tmpedges.push_back((*edges)[i]);
     if (circle(nodes, tmpedges) || degree[(*edges)[i].start] == 0 || degree[(*edges)[i].ziel] == 0) {
@@ -69,9 +73,25 @@ long optimize (std::vector<Knoten>* nodes, std::vector<Kante>* edges, int, int) 
       (*edges)[i].result = 1;
       degree[(*edges)[i].start]--;
       degree[(*edges)[i].ziel]--;
+      reached[(*edges)[i].start] = 1;
+      reached[(*edges)[i].ziel] = 1;
       bestcost += (*edges)[i].cost;
     }
   }
+
+  unsigned int reachedsum = 0;
+  for (unsigned int i = 0; i < nodes->size(); i++) {
+    reachedsum += reached[i];
+  }
+
   delete[] degree;
-  return bestcost;
+  delete[] reached;
+  //std::cout << "reachedsum:" << reachedsum << " nodessize:" << nodes->size() << std::endl;
+  if (reachedsum == nodes->size()) {
+    return bestcost;
+  }
+  else {
+    return -1;
+    //return bestcost;
+  }
 }
