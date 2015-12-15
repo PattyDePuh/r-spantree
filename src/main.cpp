@@ -80,7 +80,7 @@ int main(int argc, char* argv[]){
 
   //'best_cost' immer mit den errechneten Kosten der Lösung belegen.
   //ODER -1 bei Fehlschlag
-  printf("%ld\t%ld\n", best_cost, ((end_zeit - start_zeit) * 1000) / CLOCKS_PER_SEC );
+  printf("%ld %ld\n", best_cost, ((end_zeit - start_zeit) * 1000) / CLOCKS_PER_SEC );
   return 0;
 }
 
