@@ -14,7 +14,7 @@ bool circleRecursive(int nodeIndex, std::vector<Knoten>* nodes, std::vector<Kant
     return false;
   }
   if (visited[nodeIndex]) {
-    //std::cout << "circle at node " << nodeIndex << " from " << sourceIndex << std::endl;
+    std::cout << "circle at node " << nodeIndex << " from " << sourceIndex << std::endl;
     return true;
   }
   visited[nodeIndex]++;
@@ -35,6 +35,10 @@ bool circleRecursive(int nodeIndex, std::vector<Knoten>* nodes, std::vector<Kant
 bool circle (std::vector<Knoten>* nodes, std::vector<Kante>& edges) {
   int* visited = new int[nodes->size()];
   int* finished = new int[nodes->size()];
+  for (unsigned int i = 0; i < nodes->size(); i++) {
+    visited[i] = 0;
+    finished[i] = 0;
+  }
   for (std::vector<Knoten>::iterator it = nodes->begin(); it < nodes->end(); it++) {
     //std::cout << "It for node " << it->id << std::endl;
     if (circleRecursive(it->id, nodes, edges, visited, finished, it->id)) {
@@ -65,9 +69,13 @@ long optimize (std::vector<Knoten>* nodes, std::vector<Kante>* edges, int, int) 
 
   for (unsigned int i = 0; i < edges->size(); i++) {
     tmpedges.push_back((*edges)[i]);
+    std::cout << "trying to add edge from " << (*edges)[i].start << " to " << (*edges)[i].ziel << std::endl;
     if (circle(nodes, tmpedges) || degree[(*edges)[i].start] == 0 || degree[(*edges)[i].ziel] == 0) {
+      std::cout << " failed." << std::endl;
       tmpedges.pop_back();
       (*edges)[i].result = 0;
+      std::cout << "start node " << (*edges)[i].start << " has degree " << degree[(*edges)[i].start] << std::endl;
+      std::cout << "ziel node " << (*edges)[i].ziel << " has degree " << degree[(*edges)[i].ziel] << std::endl;
     }
     else {
       (*edges)[i].result = 1;
@@ -76,6 +84,7 @@ long optimize (std::vector<Knoten>* nodes, std::vector<Kante>* edges, int, int) 
       reached[(*edges)[i].start] = 1;
       reached[(*edges)[i].ziel] = 1;
       bestcost += (*edges)[i].cost;
+      std::cout << " succeeded." << std::endl;
     }
   }
 
