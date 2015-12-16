@@ -1,0 +1,2 @@
+rm datasetscalc/*
+rm datasetssolution/*
